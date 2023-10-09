@@ -1,0 +1,65 @@
+# Copyright 2018 The Hafnium Authors.
+#
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file or at
+# https://opensource.org/licenses/BSD-3-Clause.
+
+import("//build/toolchain/embedded.gni")
+import("//build/toolchain/host.gni")
+
+group("root") {
+  deps = [
+    "//src:peregrine(:aem_v8a_fvp_clang)",
+  ]
+}
+
+group("test_root") {
+  testonly = true
+
+  deps = [
+    # "//test/arch(:aem_v8a_fvp_clang)",
+  ]
+}
+
+# Describe each of the platforms used in this project.
+#
+origin_address = getenv("PEREGRINE_KERNEL_START_ADDR")
+
+if (origin_address == "" ) {
+  origin_address = "0x80B00000"
+}
+
+# Fixed Virtual Platform toolchain
+aarch64_toolchains("aem_v8a_fvp") {
+  cpu = "cortex-a57"
+  origin_address = origin_address
+  phys_start_addr = "0x80000000"
+  phys_mem_size = "0x80000000"
+  boot_flow = "//src/boot_flow:linux"
+  console = "//src/arch/aarch64/pl011"
+  iommu = "//src/arch/aarch64/arm_smmuv3"
+  gic_version = 3
+  gic_start = "0x2c000000"
+  gic_end = "0x2f300000"
+  gicd_base_address = "0x2f000000"
+  gicd_size = "0x10000"
+  gicr_base_address = "0x2f100000"
+  gicr_size = "0x100000"
+  gicc_base_address = "0x2c000000"
+  gicc_size = "0x2000"
+  gich_base_address = "0x2c010000"
+  gich_size = "0x2000"
+  gicv_base_address = "0x2c02f000"
+  gicv_size = "0x2000"
+  gits_base_address = "0x2f020000"
+  gits_size = "0x20000"
+  heap_pages = 60
+  uart_base_address = "0x1c090000"
+  test_mode = false
+  toolchain_args = {
+    plat_prng = "//src/arch/aarch64/plat/prng:prng"
+    smmu_base_address = "0x2b400000"
+    smmu_memory_size = "0x100000"
+  }
+}
+

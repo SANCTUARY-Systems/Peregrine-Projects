@@ -1,0 +1,32 @@
+# Copyright 2018 The Hafnium Authors.
+#
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file or at
+# https://opensource.org/licenses/BSD-3-Clause.
+
+import("//build/toolchain/embedded.gni")
+import("//build/toolchain/host.gni")
+
+group("root") {
+  deps = [
+  ]
+}
+
+group("test_root") {
+  testonly = true
+
+  deps = [
+    "//src:unit_tests(:host_fake_clang)"
+  ]
+}
+
+# Describe each of the platforms used in this project.
+
+host_toolchain("host_fake") {
+  use_platform = true
+  heap_pages = 60
+  test_mode = true
+  proprietary = "//src/proprietary"
+  external_mediator_include = "pg/arch/tee/optee_mediator.h"
+}
+
